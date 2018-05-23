@@ -1,12 +1,14 @@
 #ifndef CMD_HDR
 #define CMD_HDR
+#include<stdio.h>
 #include<stdlib.h>
-#define FILENAME "image.bmp"
-#define FILENAMENEW "image2.bmp"
-#define SYSIMAGE "display -resize '200%' " FILENAME "&"
-#define SYSIMAGENEW "display -resize '200%' " FILENAMENEW "&"
+#include<string.h>
+#include<inttypes.h>
+#define TEMPIMAGE "tempimg.bmp"
 
 void clearUni();
-void dispBMP();
+void dispBMP(char* filename);
+void wMsg();
+void hMsg();
 
 #endif

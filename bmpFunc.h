@@ -6,6 +6,19 @@
 #include <math.h>
 #include <string.h>
 
+// found at https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Typeof.html#Typeof
+#define max(a,b)                                \
+  ({ typeof(a) _a = (a);                        \
+    typeof(b) _b = (b);                         \
+    _a > _b ? _a : _b; })
+
+#define min(a,b)                                \
+  ({ typeof(a) _a = (a);                        \
+    typeof(b) _b = (b);                         \
+    _a < _b ? _a : _b; })
+
+#define swap(x,y) do{ x=x^y; y=x^y; x=y^x;} while(0);
+
 #define DEBUG
 
 /* BMP header information found at:
@@ -39,22 +52,17 @@ typedef struct {
     uint32_t biClrUsed;       //0x00  ||4  uses bits per pixel define if you want other colors
     uint32_t biClrImportant;  //0x00  ||4  if all colors are important
 } BMPInfoHeader;
-
-typedef struct {
-  uint8_t red;
-  uint8_t green;
-  uint8_t blue;
-  uint8_t pad;
-} rgbQuad;
 #pragma pack(pop)
 
-void swap(rgbQuad a, rgbQuad b);
 void verifyBMP(FILE* fPtr, BMPFileHeader* bmpFH, BMPInfoHeader* bmpIH);
-rgbQuad* toCArr(FILE* fPtr, uint32_t pixels);
-void invBMP(uint32_t pixels, rgbQuad* colors);
-void tpArr(uint32_t* height, uint32_t* width, rgbQuad** CArr, rgbQuad** newCArr);
-void reverseRow(uint32_t* height, uint32_t* width, rgbQuad** CArr);
-rgbQuad** rotateBMP(uint32_t* height, uint32_t* width, rgbQuad** CArr);
-void writeBMP(FILE* fPtr, BMPFileHeader* bmpFH, BMPInfoHeader* bmpIH, rgbQuad* CArr, uint32_t pixels);
+void* toCArr(FILE* fPtr, BMPInfoHeader bmpIH, uint8_t* cArr);
+void invBMP(BMPInfoHeader bmpIH, uint8_t* colors);
+uint8_t* vFlip(uint32_t H, uint32_t rowSize, uint8_t* cArr);
+void flipRow(uint8_t* row, uint32_t W);
+uint8_t* hFlip(uint32_t H, uint32_t rowSize, uint32_t W, uint8_t* cArr);
+uint8_t* rotateBMP90(BMPInfoHeader* bmpIH, BMPFileHeader* bmpFH, uint32_t* rSize, uint8_t* cArr, char* orientation);
+uint8_t* rotateBMP180(BMPInfoHeader bmpIH, uint8_t* cArr, uint32_t rowSize);
+void writeBMP(FILE* fPtr, BMPFileHeader* bmpFH, BMPInfoHeader* bmpIH, uint8_t* CArr);
+void sepia(uint8_t* cArr, BMPInfoHeader bmpInfo, uint32_t rSize);
 
 #endif
